@@ -1,11 +1,12 @@
 import uvicorn
+from config.enviroments import PORT, HOST
 
 
 if __name__ == "__main__":
     uvicorn.run(
         "pizza_delivery_fastapi.main:app",
-        host="0.0.0.0",
-        port=8000,
+        host=HOST,
+        port=PORT,
         reload=True,
-        log_level='debug',
+        log_level="debug",
     )
