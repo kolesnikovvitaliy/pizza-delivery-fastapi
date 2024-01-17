@@ -1,0 +1,31 @@
+version: "3.8"
+
+networks:
+  backend:
+    name: pizza_delivery_fastapi
+    driver: bridge
+
+
+services:
+
+  backend:
+    container_name: backend
+    image: backend
+    build:
+      context: ./$DOCKER_BACKEND_WORKDIR/
+      args:
+        UID: $DOCKER_BACKEND_UID
+        USER: $DOCKER_BACKEND_USER
+        PORT: $DOCKER_BACKEND_PORT
+        WORKDIR: $DOCKER_BACKEND_WORKDIR
+        APP_NAME: $APP_NAME
+      dockerfile: ../config/.docker/$DOCKER_BACKEND_WORKDIR/$APP_NAME/Dockerfile.dev
+    hostname: backend
+    restart: on-failure
+    volumes:
+      - ./$DOCKER_BACKEND_WORKDIR/$APP_NAME:/$DOCKER_BACKEND_WORKDIR/$APP_NAME
+    ports:
+      - $BACKEND_PORT:$DOCKER_BACKEND_PORT
+    networks:
+      - backend
+  

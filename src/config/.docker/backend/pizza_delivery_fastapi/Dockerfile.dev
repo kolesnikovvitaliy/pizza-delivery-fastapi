@@ -1,0 +1,101 @@
+###############################################
+# Base Image
+###############################################
+FROM python:3.12.0-slim-bullseye AS python-base
+
+ARG WORKDIR
+ARG APP_NAME
+ARG PORT
+ARG UID
+ARG USER
+
+ENV PYTHONUNBUFFERED=1 \
+    USER="$USER" \
+    UID="$UID" \
+    PORT="$PORT" \
+    APP_NAME="$APP_NAME" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_VERSION=1.7.0  \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_NO_INTERACTION=1 \
+    PYSETUP_PATH="/$WORKDIR" \
+    VENV_PATH="/$WORKDIR/.venv"
+# prepend poetry, venv to path
+ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin::$PATH"
+###############################################
+# Builder VENV_POETRY
+###############################################
+FROM python-base as builder-poetry
+
+ARG TIMEZONE=Europe/Moscow
+
+RUN buildDeps="build-essential" \ 
+    && apt-get update -yqq && apt-get install -yqq --no-install-recommends \
+    curl \
+    gcc \
+    python3-dev \
+    tzdata \
+    && ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+    && echo $TIMEZONE > /etc/timezone \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# Install Poetry - respects $POETRY_VERSION & $POETRY_HOME
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} python3 - --version ${POETRY_VERSION} && \
+    chmod a+x /opt/poetry/bin/poetry
+
+# We copy our Python requirements here to cache them
+# and install only runtime deps using poetry
+WORKDIR $PYSETUP_PATH
+COPY ./pyproject.toml ./
+RUN poetry lock --no-update
+RUN poetry install --only main --no-root --no-cache # respects \ 
+    && rm -rf ~/.cache/pypoetry/{cache,artifacts}
+
+
+###############################################
+# Production Image
+###############################################
+FROM python-base as development
+
+LABEL maintainer="kolesnikovvitaliy <kolesnikovvitaliy@mail.ru>"
+
+RUN buildDeps="build-essential" \ 
+    && apt-get update -yqq --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get autoclean
+
+RUN adduser --uid $UID --home $PYSETUP_PATH --disabled-password --gecos "" $USER && \
+    chown -hR $USER: $PYSETUP_PATH
+# Copying  config and poetry-venv into image
+COPY --from=builder-poetry $POETRY_HOME $POETRY_HOME
+COPY --from=builder-poetry $PYSETUP_PATH $PYSETUP_PATH
+COPY --from=builder-poetry /etc/timezone /etc/timezone
+COPY --from=builder-poetry /etc/localtime /etc/localtime
+
+
+
+# Create workdir for app
+WORKDIR $PYSETUP_PATH
+RUN poetry lock --no-update
+RUN poetry install --no-root --no-cache \
+    && rm -rf ~/.cache/pypoetry/{cache,artifacts}
+COPY --chown=admin:admin ./$APP_NAME $APP_NAME
+COPY ./scripts scripts
+COPY ./main.py main.py
+COPY /tests tests
+COPY ./__init__.py __init__.py
+RUN chmod +x ./scripts/activate-venv.sh && \
+    chmod +x ./scripts/run.sh
+
+EXPOSE $PORT
+USER $USER
+# start activate venv for app
+ENTRYPOINT $PYSETUP_PATH/scripts/activate-venv.sh $0 $@
+
+CMD $PYSETUP_PATH/scripts/run.sh
