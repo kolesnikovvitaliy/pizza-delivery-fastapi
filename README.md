@@ -1,6 +1,6 @@
 # pizza-delivery-fastapi
 
-## Для запуска проеката нуобходимо установить Poetry
+## Для запуска проеката необходимо установить Poetry
 ```bash
 pip install poetry
 ```
