@@ -52,3 +52,7 @@ chmod +x start_dev.sh stop_dev.sh
 ```bash
 ./stop_dev.sh
 ```
+#### Перейдите по ссылке:
+```bash
+http://localhost:8000/docs
+```
