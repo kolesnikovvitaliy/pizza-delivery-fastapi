@@ -2,8 +2,14 @@
 #
 ### Используемые технологиии  
 * Python3.12
+* Asyncio
 * FastApi
+* SQLAlchemy
+* PostgreSql
+* Alembic
+* Pydantic
 * Docker-compose
+
 
 ## Для запуска проеката необходимо установить Poetry
 ```bash
