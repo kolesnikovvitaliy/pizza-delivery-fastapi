@@ -1,0 +1,16 @@
+FROM postgres:16.1-alpine3.19
+
+RUN mkdir /logs
+RUN chmod -R 777 /logs
+RUN echo "host all all all scram-sha-256" >> var/lib/postgresql/data/pg_hba.conf
+
+CMD ["postgres", \
+    "-c",  "log_directory=/logs", \
+    "-c",  "log_statement=all", \
+    "-c",  "logging_collector=on", \
+    "-c",  "log_filename=postgresql-%Y-%m-%d_%H%M%S.log", \
+    "-c",  "log_file_mode=0777", \
+    "-c",  "log_rotation_age=1d", \
+    # "-c",  "pg_stat_statements.track=all" \
+    "-c", "fsync=on" \
+    ]
