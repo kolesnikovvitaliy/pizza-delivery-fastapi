@@ -10,7 +10,10 @@
 * Pydantic
 * Docker-compose
 
-
+#### Все логи в директории 
+```bash
+.docker_data
+```
 ## Для запуска проеката необходимо установить Poetry
 ```bash
 pip install poetry
@@ -60,5 +63,17 @@ chmod +x start_dev.sh stop_dev.sh
 ```
 #### Перейдите по ссылке:
 ```bash
-http://localhost:8000/docs
+http://localhost:8000/docs - API
+http://localhost:5050 pgAdmin 
 ```
+##### Для входа в pgAdmin нужно:
+##### Ввести пароль 'admin' и создать новый сервер:
+##### General:
+* name: backend
+##### Connection:
+* host_name: postgresql_db
+* port: 5432
+* db_name: backend 
+* user: admin
+* password: admin
+##### Save

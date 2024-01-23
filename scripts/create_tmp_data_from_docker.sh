@@ -8,5 +8,6 @@ else mkdir -p $DOCKER_DATA_BACKEND_PATH \
         && mkdir -p \
         postgresql \
         postgresql/data \
-        postgresql/logs 
+        postgresql/logs \
+        pgadmin/data
 fi
