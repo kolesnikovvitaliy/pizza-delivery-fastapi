@@ -12,7 +12,7 @@ services:
     container_name: backend
     image: backend
     build:
-      context: ./$DOCKER_BACKEND_WORKDIR/
+      context: ./$LOCAL_APP_PATH/
       args:
         DOCKER_BACKEND_UID: $DOCKER_BACKEND_UID
         DOCKER_BACKEND_USER: $DOCKER_BACKEND_USER
@@ -20,13 +20,82 @@ services:
         BACKEND_HOST_OUT: $BACKEND_HOST_OUT
         DOCKER_BACKEND_WORKDIR: $DOCKER_BACKEND_WORKDIR
         APP_NAME: $APP_NAME
-      dockerfile: ../config/.docker/$DOCKER_BACKEND_WORKDIR/$APP_NAME/Dockerfile.dev
-    hostname: backend
+      dockerfile: ../$DOCKERFILE_BACKEND_PATH/$APP_NAME/Dockerfile.dev
+    hostname: $BACKEND_HOST_NAME
     restart: on-failure
     volumes:
-      - ./$DOCKER_BACKEND_WORKDIR/$APP_NAME:/$DOCKER_BACKEND_WORKDIR/$APP_NAME
+      - ./$LOCAL_APP_PATH/$APP_NAME:/$DOCKER_BACKEND_WORKDIR/$APP_NAME
     ports:
       - $BACKEND_PORT_IN:$BACKEND_PORT_OUT
+    depends_on:
+      postgresql_db:
+        condition: service_healthy
     networks:
       - backend
   
+
+  postgresql_db:
+    container_name: postgresql_db
+    hostname: $DB_HOST_NAME
+    image: postgresql_db
+    build:
+      context: ./$DOCKERFILE_BACKEND_PATH/$DBMS_NAME/
+      dockerfile: Dockerfile.dev
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_HOST=$POSTGRES_HOST
+      - POSTGRES_DB=$POSTGRES_DB
+    restart: always
+    ports:
+      - $POSTGRES_PORT:$POSTGRES_PORT
+    volumes:
+      - $POSTGRES_SCRIPTS_INIT/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+      - postgres_db_data:/var/lib/postgresql/data
+      - postgres_db_logs:/logs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - backend
+
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: $PGADMIN_DEFAULT_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_DEFAULT_PASSWORD
+      PGADMIN_CONFIG_SERVER_MODE: $PGADMIN_CONFIG_SERVER_MODE
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    networks:
+      - backend
+
+
+    
+volumes:
+  postgres_db_data:
+    driver_opts:
+      o: bind
+      type: none
+      # TODO: Need to create a file file pizza-delivery-fastapi/.docker_data/backend/postgresql/data
+      device: $DOCKER_TMP_DATA_DACKEND_PATH/postgresql/data
+  postgres_db_logs:
+    driver_opts:
+      o: bind
+      type: none
+      # TODO: Need to create a file file pizza-delivery-fastapi/.docker_data/backend/postgresql/logs
+      device: $DOCKER_TMP_DATA_DACKEND_PATH/postgresql/logs
+  pgadmin-data:
+    driver_opts:
+      o: bind
+      type: none
+      # TODO: Need to create a file file pizza-delivery-fastapi/.docker_data/backend/postgresql/data
+      device: $DOCKER_TMP_DATA_DACKEND_PATH/pgadmin/data
