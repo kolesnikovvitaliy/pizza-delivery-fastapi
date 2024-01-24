@@ -1,5 +1,5 @@
 import uvicorn
-from config.enviroments import PORT, HOST
+from config.environments import PORT, HOST
 
 
 if __name__ == "__main__":

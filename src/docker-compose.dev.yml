@@ -73,7 +73,7 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     ports:
-      - "5050:80"
+      - $PGADMIN_PORT_IN:$PGADMIN_PORT_OUT
     restart: unless-stopped
     networks:
       - backend
