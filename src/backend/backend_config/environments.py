@@ -6,8 +6,6 @@ from backend_config import dotenv_path
 
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
-    # POSTGRES_HOST: str = os.environ.get("POSTGRES_LOCAL")  # activated if local db postgres
-
 
 POSTGRES_HOST: str = os.environ.get("POSTGRES_HOST")
 
@@ -23,5 +21,6 @@ POSTGRES_DB: str = os.environ.get("POSTGRES_DB")
 
 if os.path.exists(dotenv_path):
     DB_URL_REAL: str = "sqlite+aiosqlite:///sqlite.db"  # activated if local db sqlite
+    # POSTGRES_HOST: str = os.environ.get("POSTGRES_LOCAL")  # activated if local db postgres
 else:
     DB_URL_REAL: str = f'{SCHEMAS}://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}/{POSTGRES_DB}'

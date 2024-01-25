@@ -1,6 +1,6 @@
 # Pizza-Delivery-Fastapi проект api магазина по продаже пиццы 
 #
-### Используемые технологиии  
+### Используемые технологии    
 * Python3.12
 * Asyncio
 * FastApi
@@ -10,16 +10,14 @@
 * Pydantic
 * Docker-compose
 
-#### Все логи в директории 
-```bash
-.docker_data
-```
-## Для запуска проеката необходимо установить Poetry
+
+## Для запуска проекта необходимо установить Poetry
 ```bash
 pip install poetry
 ```
 
 #### После установки, копировать проект на свой компьютер
+##### Логи приложения расположены в директории "logs"  
 ```bash
 git clone https://github.com/kolesnikovvitaliy/pizza-delivery-fastapi.git
 ```
@@ -35,11 +33,42 @@ poetry install
 ```bash
 source .venv/bin/activate
 ```
-#### Запустить проект
+### Запустить миграции для базы данных.
+#### Если не установленна PostgreSql то запуститься встроенная Sqlite, изменений не требуется
+##### Если PostgreSql установленна нужно перейти в директорию и внести изменения в файл  "environments.py"
+```bash
+cd backend_config
+```
+##### Закомментировать переменную  DB_URL_REAL и раскомментировать переменную POSTGRES_HOST 
+```python
+if os.path.exists(dotenv_path):
+    # DB_URL_REAL: str = "sqlite+aiosqlite:///sqlite.db"  # activated if local db sqlite
+    POSTGRES_HOST: str = os.environ.get("POSTGRES_LOCAL")  # activated if local db postgres
+```
+##### Вернуться в директорию "backend"
+```bash
+cd ..
+```
+##### Выполнить по очереди команды миграции
+```bash
+alembic revision --autogenerate -m "init revision alembic"
+alembic upgrade head
+```
+
+### Запустить проект
 ```bash
 poetry run python main.py
 ```
-## Запуск проеката с помощью Docker-compose
+#### Перейдите на страницу API приложения по продаже пиццы:
+```bash
+http://localhost:8000/docs
+```
+## Запуск проекта с помощью Docker-compose
+
+#### Все логи расположены в директории  
+```bash
+.docker_data
+```
 
 #### Копировать проект на свой компьютер
 ```bash
