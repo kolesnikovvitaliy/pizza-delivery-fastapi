@@ -1,6 +1,4 @@
 from datetime import datetime
-import uuid
-from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy import String, func, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -9,11 +7,6 @@ from .base import Base
 
 
 class User(Base):
-    id: Mapped[PGUUID] = mapped_column(
-        PGUUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-    )
     username: Mapped[str] = mapped_column(
         String(25),
         nullable=False,
