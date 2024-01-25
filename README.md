@@ -12,6 +12,9 @@
 * Pydantic
 * Docker-compose
 
+<div class="img-div">
+  <img src="https://github.com/kolesnikovvitaliy/pizza_delivery_fastapi/blob/main/docs/img/scrin_1.png" width="800"/>
+</div>
 
 ## Для запуска проекта необходимо установить Poetry
 ```bash
