@@ -5,6 +5,7 @@ FROM python:3.12.0-slim-bullseye AS python-base
 
 ARG DOCKER_BACKEND_WORKDIR
 ARG APP_NAME
+ARG LOG_LEVEL
 ARG BACKEND_PORT_OUT
 ARG DOCKER_BACKEND_UID
 ARG DOCKER_BACKEND_USER
@@ -22,6 +23,7 @@ ENV PYTHONUNBUFFERED=1 \
     BACKEND_PORT_OUT="$BACKEND_PORT_OUT" \
     BACKEND_HOST_OUT="$BACKEND_HOST_OUT" \
     APP_NAME="$APP_NAME" \
+    LOG_LEVEL="$LOG_LEVEL" \
     SCHEMAS="$SCHEMAS" \
     POSTGRES_USER="$POSTGRES_USER" \
     POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
@@ -103,7 +105,8 @@ COPY --chown=admin:admin ./$APP_NAME $APP_NAME
 COPY --chown=admin:admin ./alembic alembic
 COPY ./alembic.ini alembic.ini
 COPY ./scripts scripts
-# COPY ./backend_config backend_config
+COPY ./backend_config backend_config
+COPY --chown=admin:admin ./logs logs
 COPY ./main.py main.py
 COPY /tests tests
 COPY ./__init__.py __init__.py

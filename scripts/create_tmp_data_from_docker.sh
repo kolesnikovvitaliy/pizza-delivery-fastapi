@@ -9,5 +9,6 @@ else mkdir -p $DOCKER_DATA_BACKEND_PATH \
         postgresql \
         postgresql/data \
         postgresql/logs \
-        pgadmin/data
+        pgadmin/data \
+        app_logs
 fi

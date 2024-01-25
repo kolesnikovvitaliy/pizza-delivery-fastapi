@@ -11,6 +11,7 @@ if os.path.exists(dotenv_path):
 else:
     POSTGRES_HOST: str = os.environ.get("POSTGRES_HOST")
 
+LOG_LEVEL: str = os.environ.get("LOG_LEVEL")
 PORT: int = int(os.environ.get("BACKEND_PORT_OUT"))
 HOST: str = os.environ.get("BACKEND_HOST_OUT")
 
