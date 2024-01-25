@@ -4,8 +4,10 @@
 * Python3.12
 * Asyncio
 * FastApi
-* SQLAlchemy
+* SQLAlchemy["asyncio"]
 * PostgreSql
+* asyncpg
+* aiosqlite
 * Alembic
 * Pydantic
 * Docker-compose
