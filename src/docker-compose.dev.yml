@@ -20,6 +20,7 @@ services:
         BACKEND_HOST_OUT: $BACKEND_HOST_OUT
         DOCKER_BACKEND_WORKDIR: $DOCKER_BACKEND_WORKDIR
         APP_NAME: $APP_NAME
+        LOG_LEVEL: $LOG_LEVEL
         SCHEMAS: $SCHEMAS
         POSTGRES_USER: $POSTGRES_USER
         POSTGRES_PASSWORD: $POSTGRES_PASSWORD
@@ -30,8 +31,9 @@ services:
     hostname: $BACKEND_HOST_NAME
     restart: on-failure
     volumes:
-      - ./$LOCAL_APP_PATH/alembic/versions:/$DOCKER_BACKEND_WORKDIR/alembic/versions
-      - ./$LOCAL_APP_PATH/$APP_NAME:/$DOCKER_BACKEND_WORKDIR/$APP_NAME
+      - alembic_versions:/$DOCKER_BACKEND_WORKDIR/alembic/versions
+      - app:/$DOCKER_BACKEND_WORKDIR/$APP_NAME
+      - app_logs:/$DOCKER_BACKEND_WORKDIR/logs
     ports:
       - $BACKEND_PORT_IN:$BACKEND_PORT_OUT
     depends_on:
@@ -88,18 +90,40 @@ services:
 
     
 volumes:
+
+  app:
+     driver_opts:
+      o: bind
+      type: none
+      device: ./src/$LOCAL_APP_PATH/$APP_NAME
+
+  app_logs:
+    driver_opts:
+      o: bind
+      type: none
+      # TODO: Need to create a file file pizza-delivery-fastapi/.docker_data/backend/app_logs
+      device: $DOCKER_TMP_DATA_DACKEND_PATH/app_logs
+
+  alembic_versions:
+    driver_opts:
+      o: bind
+      type: none
+      device: ./src/$LOCAL_APP_PATH/alembic/versions
+
   postgres_db_data:
     driver_opts:
       o: bind
       type: none
       # TODO: Need to create a file file pizza-delivery-fastapi/.docker_data/backend/postgresql/data
       device: $DOCKER_TMP_DATA_DACKEND_PATH/postgresql/data
+
   postgres_db_logs:
     driver_opts:
       o: bind
       type: none
       # TODO: Need to create a file file pizza-delivery-fastapi/.docker_data/backend/postgresql/logs
       device: $DOCKER_TMP_DATA_DACKEND_PATH/postgresql/logs
+      
   pgadmin-data:
     driver_opts:
       o: bind
