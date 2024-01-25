@@ -7,4 +7,4 @@ BASE_DIR = Path(__file__).parent.parent.parent
 
 # Loading `.env` files
 # See docs: https://gitlab.com/mkleehammer/autoconfig
-dotenv_path = BASE_DIR.joinpath("config", ".env")
+dotenv_path = BASE_DIR.joinpath("src_config", ".env")

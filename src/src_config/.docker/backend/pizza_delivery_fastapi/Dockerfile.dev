@@ -9,6 +9,12 @@ ARG BACKEND_PORT_OUT
 ARG DOCKER_BACKEND_UID
 ARG DOCKER_BACKEND_USER
 ARG BACKEND_HOST_OUT
+ARG SCHEMAS
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+ARG POSTGRES_PORT
+ARG POSTGRES_DB
+ARG POSTGRES_HOST
 
 ENV PYTHONUNBUFFERED=1 \
     DOCKER_BACKEND_USER="$DOCKER_BACKEND_USER" \
@@ -16,6 +22,12 @@ ENV PYTHONUNBUFFERED=1 \
     BACKEND_PORT_OUT="$BACKEND_PORT_OUT" \
     BACKEND_HOST_OUT="$BACKEND_HOST_OUT" \
     APP_NAME="$APP_NAME" \
+    SCHEMAS="$SCHEMAS" \
+    POSTGRES_USER="$POSTGRES_USER" \
+    POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+    POSTGRES_PORT="$POSTGRES_PORT" \
+    POSTGRES_DB="$POSTGRES_DB" \
+    POSTGRES_HOST="$POSTGRES_HOST" \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
@@ -88,8 +100,10 @@ RUN poetry lock --no-update
 RUN poetry install --no-root --no-cache \
     && rm -rf ~/.cache/pypoetry/{cache,artifacts}
 COPY --chown=admin:admin ./$APP_NAME $APP_NAME
+COPY --chown=admin:admin ./alembic alembic
+COPY ./alembic.ini alembic.ini
 COPY ./scripts scripts
-COPY ./config config
+# COPY ./backend_config backend_config
 COPY ./main.py main.py
 COPY /tests tests
 COPY ./__init__.py __init__.py
