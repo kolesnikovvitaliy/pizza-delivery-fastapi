@@ -3,7 +3,6 @@ from sqlalchemy import Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy_utils.types.choice import ChoiceType
 from .base import Base
-from .user import GUID
 
 if TYPE_CHECKING:
     from .user import User  # noqa: F401
@@ -25,7 +24,7 @@ class Order(Base):
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     order_status: Mapped[str] = mapped_column(ChoiceType(choices=ORDER_STATUSES), default='PENDING')
     pizza_size: Mapped[str] = mapped_column(ChoiceType(choices=PIZZA_SIZES), default='SMALL')
-    user_id: Mapped[GUID] = mapped_column(GUID(), ForeignKey('users.id'), nullable=False)
+    user_id: Mapped[Integer] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
 
     user = relationship('User', back_populates='orders')
 

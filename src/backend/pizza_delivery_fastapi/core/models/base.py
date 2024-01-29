@@ -13,7 +13,11 @@ class Base(DeclarativeBase):
 
     @declared_attr
     def __tablename__(cls) -> str:
-        return f"{cls.__name__.lower()}s"
+        return ''.join(
+            ['_' + ltr.lower()
+             if ltr.isupper() else ltr
+             for ltr in f"{cls.__name__}s"]
+        ).lstrip('_')
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(
@@ -24,5 +28,4 @@ class Base(DeclarativeBase):
     update_at: Mapped[datetime] = mapped_column(
         onupdate=func.now(),
         default=datetime.utcnow,
-        nullable=False,
     )
