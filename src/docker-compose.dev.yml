@@ -27,6 +27,9 @@ services:
         POSTGRES_PORT: $POSTGRES_PORT
         POSTGRES_DB: $POSTGRES_DB
         POSTGRES_HOST: $POSTGRES_HOST
+        JWT_ALGORITM: $JWT_ALGORITM
+        JWT_SECRET_CODE: $JWT_SECRET_CODE
+        JWT_EXPIRES: $JWT_EXPIRES
       dockerfile: ../$DOCKERFILE_BACKEND_PATH/$APP_NAME/Dockerfile.dev
     hostname: $BACKEND_HOST_NAME
     restart: on-failure

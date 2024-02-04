@@ -18,6 +18,10 @@ POSTGRES_USER: str = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD: str = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_PORT: int = int(os.environ.get("POSTGRES_PORT"))
 POSTGRES_DB: str = os.environ.get("POSTGRES_DB")
+JWT_ALGORITHM: str = os.environ.get("JWT_ALGORITM")
+JWT_SECRET_CODE: str = os.environ.get("JWT_SECRET_CODE")
+JWT_EXPIRES: int = int(os.environ.get("JWT_EXPIRES"))
+
 
 if os.path.exists(dotenv_path):
     DB_URL_REAL: str = "sqlite+aiosqlite:///sqlite.db"  # activated if local db sqlite
