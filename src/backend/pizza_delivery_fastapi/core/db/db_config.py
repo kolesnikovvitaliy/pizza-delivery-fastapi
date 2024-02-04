@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from backend_config.environments import DB_URL_REAL
 
 
