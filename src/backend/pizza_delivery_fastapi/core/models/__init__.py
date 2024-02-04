@@ -2,12 +2,12 @@ __all__ = (
     "Base",
     "User",
     "Order",
-    "RefreshToken"
-
+    "RefreshToken",
+    "GUID",
 )
 
 
 from .base import Base
-from .user import User
 from .order import Order
-from .refresh_token import RefreshToken
+from .refresh_token import GUID, RefreshToken
+from .user import User
