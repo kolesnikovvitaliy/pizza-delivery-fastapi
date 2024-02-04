@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, Boolean
+from sqlalchemy import Boolean, LargeBinary, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -20,8 +20,8 @@ class User(Base):
         unique=True,
         nullable=False,
     )
-    hashed_password: Mapped[Text] = mapped_column(
-        Text,
+    password: Mapped[LargeBinary] = mapped_column(
+        LargeBinary,
         nullable=False,
     )
     is_staff: Mapped[Boolean] = mapped_column(
@@ -33,8 +33,8 @@ class User(Base):
         default=False,
     )
 
-    orders = relationship('Order', back_populates='user')
-    refresh_tokens = relationship('RefreshToken', back_populates='user')
+    orders = relationship("Order", back_populates="user")
+    refresh_tokens = relationship("RefreshToken", back_populates="user")
 
     def __str__(self):
         return f"{__class__.__name__}(ID: <{self.id!r}>, Username: <{self.username!r}>, Mail: <{self.email}>)"
