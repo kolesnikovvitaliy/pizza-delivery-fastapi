@@ -11,6 +11,7 @@
 * Alembic
 * Pydantic
 * Docker-compose
+* Auth2.0
 
 <div class="img-div">
   <img src="https://github.com/kolesnikovvitaliy/pizza-delivery-fastapi/blob/main/docs/img/scrin_1.png" width="800"/>
