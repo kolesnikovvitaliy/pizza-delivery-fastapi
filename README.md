@@ -17,6 +17,12 @@
   <img src="https://github.com/kolesnikovvitaliy/pizza-delivery-fastapi/blob/main/docs/img/scrin_1.png" width="800"/>
 </div>
 
+#
+
+<div class="img-div">
+  <img src="https://github.com/kolesnikovvitaliy/pizza-delivery-fastapi/blob/main/docs/database_diagram.png" width="800"/>
+</div>
+
 ## Для запуска проекта необходимо установить Poetry
 ```bash
 pip install poetry
