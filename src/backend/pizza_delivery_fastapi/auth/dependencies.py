@@ -46,8 +46,10 @@ async def valid_refresh_token_user(
     refresh_token: RefreshToken = Depends(valid_refresh_token),
     session: AsyncSession = Depends(db_connect),
 ) -> User:
-    user = await crud.get_user_by_id(user_id=refresh_token.user_id, session=session)
-    if not user:
+    user = await crud.get_user_by_id(
+        user_id=refresh_token.user_id, session=session
+    )
+    if not user or not user.is_active:
         raise RefreshTokenNotValid()
 
     return user

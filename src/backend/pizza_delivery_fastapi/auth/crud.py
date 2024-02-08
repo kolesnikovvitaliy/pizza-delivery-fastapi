@@ -10,7 +10,7 @@ from ..core.models import RefreshToken, User
 from ..core.service import execute, execute_add, fetch_one_all
 from .config import auth_config
 from .exceptions import InvalidCredentials
-from .schemas import UserCreate
+from .schemas import UserCreate, LoginUser
 from .security import check_password, hash_password
 from .utils import generate_random_alphanum
 
@@ -31,7 +31,9 @@ async def get_user_by_id(user_id: int, session: AsyncSession) -> User | None:
         return user
 
 
-async def get_user_by_email(email: EmailStr, session: AsyncSession) -> User | None:
+async def get_user_by_email(
+    email: EmailStr, session: AsyncSession
+) -> User | None:
     select_query = select(User).where(User.email == email)
     user = await fetch_one_all(select_query, session=session)
     if user:
@@ -40,13 +42,17 @@ async def get_user_by_email(email: EmailStr, session: AsyncSession) -> User | No
 
 
 async def authenticate_user(
-    auth_data: UserCreate,
+    auth_data: LoginUser,
+    # email: str,
+    # password: str,
     session: AsyncSession,
 ) -> User:
+    # user = await get_user_by_email(email=email, session=session)
     user = await get_user_by_email(auth_data.email, session=session)
     if not user:
         raise InvalidCredentials()
 
+    # if not check_password(password, user.password):
     if not check_password(auth_data.password, user.password):
         raise InvalidCredentials()
 
@@ -60,11 +66,15 @@ async def create_refresh_token(
     session: AsyncSession,
 ) -> str:
     if not refresh_token:
-        select_query = select(RefreshToken).where(RefreshToken.user_id == user_id)
+        select_query = select(RefreshToken).where(
+            RefreshToken.user_id == user_id
+        )
         token = await fetch_one_all(select_query, session=session)
         if not token:
             # TODO: is_valid_token
-            new_refresh_token = generate_random_alphanum(auth_config.LEN_REFRESH_TOKEN)
+            new_refresh_token = generate_random_alphanum(
+                auth_config.LEN_REFRESH_TOKEN
+            )
         else:
             return token.refresh_token
     else:
@@ -72,7 +82,8 @@ async def create_refresh_token(
     token = RefreshToken(
         uuid=uuid.uuid4(),
         refresh_token=new_refresh_token,
-        expires_at=datetime.utcnow() + timedelta(seconds=auth_config.REFRESH_TOKEN_EXP),
+        expires_at=datetime.utcnow()
+        + timedelta(seconds=auth_config.REFRESH_TOKEN_EXP),
         user_id=user_id,
     )
     new_refresh_token = await execute_add(token, session=session)
@@ -104,3 +115,11 @@ async def expire_refresh_token(
         .where(RefreshToken.uuid == refresh_token_uuid)
     )
     await execute(update_query, session=session)
+
+
+async def update_user_is_active(user: UserCreate, session: AsyncSession, is_active=False):
+    if is_active:
+        stmt = update(User).where(User.id == user.id).values(is_active=is_active)
+    else:
+        stmt = update(User).where(User.id == user.id).values(is_active=is_active)
+    await execute(select_query=stmt, session=session)

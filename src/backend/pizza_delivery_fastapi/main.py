@@ -3,6 +3,7 @@ from fastapi import FastAPI
 
 from .api import router as router_v1
 from .auth import router as router_auth
+
 # from .core.core_config import core_logger as logger
 from .core.core_config import settings
 

@@ -1,6 +1,10 @@
 from pydantic_settings import BaseSettings
 
-from backend_config.environments import JWT_ALGORITHM, JWT_EXPIRES, JWT_SECRET_CODE
+from backend_config.environments import (
+    JWT_ALGORITHM,
+    JWT_EXPIRES,
+    JWT_SECRET_CODE,
+)
 
 
 class AuthConfig(BaseSettings):
@@ -17,4 +21,3 @@ class AuthConfig(BaseSettings):
 
 
 auth_config = AuthConfig()
-

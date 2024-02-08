@@ -4,9 +4,18 @@ from typing import Annotated
 
 from annotated_types import MaxLen, MinLen
 from fastapi import HTTPException
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    field_validator,
+    validator,
+)
 
-STRONG_PASSWORD_PATTERN = re.compile(r"^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,128}$")
+STRONG_PASSWORD_PATTERN = re.compile(
+    r"^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,128}$"
+)
 LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\-]+$")
 
 
@@ -21,8 +30,8 @@ class UserCreate(CustomModel):
     username: Annotated[str, MinLen(1), MaxLen(20)]
     email: EmailStr
     password: str = Field(min_length=6, max_length=128)
-    is_staff: bool
-    is_active: bool
+    is_staff: bool = Field(default=False)
+    is_active: bool = Field(default=True)
 
     @validator("username")
     @classmethod
@@ -56,6 +65,25 @@ class ShowUser(CustomModel):
     is_staff: bool
     created_at: datetime
     # update_at: datetime
+
+
+class LoginUser(CustomModel):
+    email: EmailStr
+    password: str = Field(min_length=6, max_length=128)
+
+    @field_validator("password", mode="after")
+    @classmethod
+    def valid_password(cls, password: str) -> str:
+        if not re.match(STRONG_PASSWORD_PATTERN, password):
+            raise ValueError(
+                "Password must contain at least "
+                "one lower character, "
+                "one upper character, "
+                "digit or "
+                "special symbol"
+            )
+
+        return password
 
 
 class CreateRefreshToken(CustomModel):
@@ -115,6 +143,7 @@ class JWTData(CustomModel):
     user_id: int = Field(alias="sub")
     exp: datetime = Field(alias="exp")
     is_active: bool = Field(alias="is_active")
+    is_staff: bool = Field(alias="is_staff")
 
 
 class AccessTokenResponse(CustomModel):

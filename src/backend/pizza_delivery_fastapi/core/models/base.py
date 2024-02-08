@@ -1,7 +1,12 @@
 from datetime import datetime
 
 from sqlalchemy import func
-from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    declared_attr,
+    mapped_column,
+)
 
 
 class Base(DeclarativeBase):
@@ -10,7 +15,10 @@ class Base(DeclarativeBase):
     @declared_attr
     def __tablename__(cls) -> str:
         return "".join(
-            ["_" + ltr.lower() if ltr.isupper() else ltr for ltr in f"{cls.__name__}s"]
+            [
+                "_" + ltr.lower() if ltr.isupper() else ltr
+                for ltr in f"{cls.__name__}s"
+            ]
         ).lstrip("_")
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

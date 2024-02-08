@@ -10,7 +10,9 @@ async def session_close(session: AsyncSession) -> None:
 
 
 async def fetch_one_all(
-    select_query: Select | Insert | Update, session: AsyncSession, all: bool = False
+    select_query: Select | Insert | Update,
+    session: AsyncSession,
+    all: bool = False,
 ) -> Any | None:
     result: Result = await session.execute(select_query)
     await session_close(session=session)
@@ -19,15 +21,17 @@ async def fetch_one_all(
     return result.scalars().first()
 
 
-async def execute_add(items: Any, session: AsyncSession) -> Any:
-    session.add(items)
+async def execute_add(model: Any, session: AsyncSession) -> Any:
+    session.add(model)
     await session.commit()
-    await session.refresh(items)
+    await session.refresh(model)
     await session.close()
-    return items
+    return model
 
 
-async def execute_delete(model: Any, value: Any, session: AsyncSession) -> None:
+async def execute_delete(
+    model: Any, value: Any, session: AsyncSession
+) -> None:
     await session.delete(model, value)
     await session_close(session=session)
 
