@@ -8,6 +8,8 @@ from .base import Base
 if TYPE_CHECKING:
     from .order import Order  # noqa: F401
     from .refresh_token import RefreshToken  # noqa: F401
+    from .post import Post  # noqa: F401
+    from .profile import Profile  # noqa: F401
 
 
 class User(Base):
@@ -35,6 +37,9 @@ class User(Base):
 
     orders = relationship("Order", back_populates="user")
     refresh_tokens = relationship("RefreshToken", back_populates="user")
+
+    posts: Mapped[list["Post"]] = relationship(back_populates="user")
+    profile: Mapped["Profile"] = relationship(back_populates="user")
 
     def __str__(self):
         return f"{__class__.__name__}(ID: <{self.id!r}>, Username: <{self.username!r}>, Mail: <{self.email}>)"

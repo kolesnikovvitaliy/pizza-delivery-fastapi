@@ -8,6 +8,8 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .user import User  # noqa: F401
+    from .product import Product
+    from .order_product_association import OrderProductAssociation
 
 
 class Order(Base):
@@ -29,6 +31,17 @@ class Order(Base):
     pizza_size: Mapped[str] = mapped_column(
         ChoiceType(choices=PIZZA_SIZES), default="SMALL"
     )
+    promo_code: Mapped[str | None]
+
+    products: Mapped[list["Product"]] = relationship(
+        secondary="order_product_association",
+        back_populates="orders",
+    )
+    # association between Parent -> Association -> Child
+    products_details: Mapped[list["OrderProductAssociation"]] = relationship(
+        back_populates="order"
+    )
+
     user_id: Mapped[Integer] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False
     )
