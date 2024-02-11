@@ -20,12 +20,14 @@ class CustomOrderModel(BaseModel):
 
 class CreateOrder(CustomOrderModel):
     quantity: int
+    pizza_name: str
     pizza_size: str = Field(default="SMALL")
 
 
 class ShowOrder(CustomOrderModel):
     id: int
     user_id: int
+    pizza_name: str
     pizza_size: Annotated[..., AfterValidator(convert_choice)] = Field(
         default="SMALL"
     )
@@ -47,3 +49,4 @@ class OrderUpdatePartial(CustomOrderModel):
         default="SMALL"
     )
     quantity: int
+    pizza_name: str

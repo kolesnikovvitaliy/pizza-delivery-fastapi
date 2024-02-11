@@ -37,6 +37,7 @@ async def create_order(
     ## Placing an Order
     This requires the following
     - quantity : integer
+    - pizza_name: str
     - pizza_size: str
     """
     return await crud.create_order(
@@ -140,7 +141,8 @@ async def update_order_partial(
     """
     ## Updating an order
     This updates an order and requires the following fields
-    - quantity : integer
+    - quantity: integer
+    - pizza_name: str
     - pizza_size: str
     """
     return await crud.update_order(

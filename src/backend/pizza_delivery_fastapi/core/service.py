@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 async def session_close(session: AsyncSession) -> None:
     await session.commit()
-    await session.close()
+    # await session.close()
 
 
 async def fetch_one_all(
